@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import './style.css'
-import Trash from '../../assets/trash.svg'
+//import Trash from '../../assets/trash.svg'
 import api from '../../services/api'
 
 function Home() {
@@ -92,41 +92,22 @@ const [rejeitoData, setRejeitoData] = useState({
         data_liberacao: dataLiberacao,
       };
       
-      if (!payload.codigo_interno || !payload.categoria_id) {
-        alert("Código Interno e Categoria são obrigatórios!");
-        return;
+
+      for (const chave in payload){
+        console.log(payload[chave])
+        if (!payload[chave]){
+          alert("Todos os campos são obrigatórios");
+          return;
+        }
       }
-
+      alert("entrou aqui")
       await api.post('/rejeito', payload);
-
       alert('Rejeito cadastrado com SUCESSO!');
-      
+
     } catch (error) {
       console.error("Falha ao cadastrar o rejeito:", error.response?.data || error.message);
       alert(`Erro ao cadastrar: ${error.response?.data?.error || 'Verifique os dados e tente novamente.'}`);
     }
-  }
-
-  async function createRejeito() {
-    console.log("Enviando dados do rejeito:", rejeitoData);
-    alert('Rejeito cadastrado (simulação)!');
-  }
-
-  async function getUsers(){
-    const usersFromApi = await api.get('/usuarios')
-
-    setUsers(usersFromApi.data)
-
-  }
-
-  async function createUsers(){
-    await api.post('/usuarios', {
-      name: inputName.current.value,
-      age: inputAge.current.value,
-      email: inputEmail.current.value
-    })
-
-    getUsers()
   }
 
   async function deleteUsers(id){
@@ -135,43 +116,21 @@ const [rejeitoData, setRejeitoData] = useState({
   }
 
   useEffect(() => {
-    getUsers()
+
   }, [])
 
   return (
     <>
-      {/* <div className='container'>
-        <form>
-          <h1>Cadastro de Usuário</h1>
-          <div></div>
-          <input placeholder="Nome" name='nome' type='text'ref = {inputName} />
-          <input placeholder="Idade" name='idade' type='number' ref = {inputAge} />
-          <input placeholder="Email" name='email' type='text' ref = {inputEmail} />
-          <button type='button' onClick= {createUsers} >Cadastrar</button>
-        </form>
-        {users.map(user => (
-          <div key={user.id} className="card">
-            <div>
-              <p>Nome: <span>{user.name}</span> </p>
-              <p>Idade: <span>{user.age}</span> </p>
-              <p>Email: <span>{user.email}</span> </p>
-            </div>
-            <button onClick={() => deleteUsers(user.id)}>
-              <img src={Trash} />
-            </button>
-          </div>
-        ))}
-
-      </div> */}
-      
       <div className='container'>
         <form>
           <h1>Cadastro de Rejeito</h1>
 
             <label>Código Interno</label>
             <input placeholder="Código Interno" name="codigo_interno" type="text" value={rejeitoData.codigo_interno} onChange={handleRejeitoChange} />
+            
             <label>Descrição</label>
             <input placeholder="Descrição" name="descricao" type="text" value={rejeitoData.descricao} onChange={handleRejeitoChange} />
+            
             <label>Categoria</label>
             <select 
               name="categoria_id" 
@@ -185,24 +144,34 @@ const [rejeitoData, setRejeitoData] = useState({
                 </option>
               ))}
             </select>
+            
             <label>Material ID</label>
             <input placeholder="Material ID" name="material_id" type="number" value={rejeitoData.material_id} onChange={handleRejeitoChange} />
+            
             <label>Peso (kg)</label>
             <input placeholder="Peso (kg)" name="peso_kg" type="number" step="0.01" value={rejeitoData.peso_kg} onChange={handleRejeitoChange} />
+            
             <label>Dimensões (cm)</label>
             <input placeholder="Dimensões (cm)" name="dimensoes_cm" type="text" value={rejeitoData.dimensoes_cm} onChange={handleRejeitoChange} />
+            
             <label>Atividade (Bq)</label>
             <input placeholder="Atividade (Bq)" name="atividade_bq" type="number" step="0.01" value={rejeitoData.atividade_bq} onChange={handleRejeitoChange}  />
+            
             <label>Tempo de Decaimento (dias)</label>
             <input placeholder="Tempo de Decaimento (dias)" name="tempo_decaimento_dias" type="number" step="0.01" value={rejeitoData.tempo_decaimento_dias} onChange={handleRejeitoChange} />
+            
             <label>Nível de Referência (Bq)</label>
             <input placeholder="Nível de Referência (Bq)" name="nivel_referencia_bq" type="number" step="0.01" value={rejeitoData.nivel_referencia_bq} onChange={handleRejeitoChange} />
+            
             <label>Data de Medição </label>
             <input name="data_medicao_atividade" type="datetime-local" value={rejeitoData.data_medicao_atividade} onChange={handleRejeitoChange} />
+            
             <label>Data de Recebimento</label>
             <input name="data_recebimento" type="datetime-local" value={rejeitoData.data_recebimento} onChange={handleRejeitoChange} />
+            
             <label>Data de Liberacão</label>
             <input name="data_liberacao" type="datetime-local" value={rejeitoData.data_liberacao} onChange={handleRejeitoChange} />
+            
             <label>Status</label>
             <select 
               name="status_id" 
@@ -216,6 +185,7 @@ const [rejeitoData, setRejeitoData] = useState({
                 </option>
               ))}
             </select>
+            
             <label>Local de Armazenamento</label>
             <select 
               name="local_armazenamento_id" 
